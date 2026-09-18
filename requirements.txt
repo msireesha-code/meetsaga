@@ -1,0 +1,31 @@
+# MeetSage backend dependencies.
+# Core packages below (fastapi, torch, numpy, pydantic, uvicorn, openai) are expected
+# to already be available system-wide on the target machine; the venv is created with
+# --system-site-packages to reuse them. This file lists the full set for a clean install.
+
+fastapi>=0.110
+uvicorn[standard]>=0.29
+sqlalchemy>=2.0
+alembic>=1.13
+pydantic>=2.6
+pydantic-settings>=2.2
+python-multipart>=0.0.9
+aiofiles>=23.2
+python-dotenv>=1.0
+
+# Transcription
+faster-whisper>=1.0
+
+# Diarization
+pyannote.audio>=3.1
+torch>=2.0
+torchaudio>=2.0
+soundfile>=0.12
+
+# Analysis (OpenAI-compatible client, works with local/remote LLMs)
+openai>=1.0
+
+# Testing
+pytest>=8.0
+pytest-asyncio>=0.23
+httpx>=0.27

@@ -1,0 +1,35 @@
+# MeetSage systemd unit — production mode (backend serves the built frontend
+# itself; one process, one port). Install with:
+#
+#   sudo cp deploy/systemd/meetsage.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now meetsage
+#
+# Before enabling: replace every /opt/meetsage below with your actual install
+# path (systemd does not expand shell variables in unit files, so this must be
+# a literal substitution — e.g. `sed -i 's#/opt/meetsage#/your/actual/path#g'`)
+# and adjust User/Group to the user MeetSage should run as (never root).
+# Build the frontend first: ./scripts/build_frontend.sh
+
+[Unit]
+Description=MeetSage Meeting Intelligence Platform
+After=network.target
+
+[Service]
+Type=simple
+User=meetsage
+Group=meetsage
+WorkingDirectory=/opt/meetsage/backend
+EnvironmentFile=/opt/meetsage/.env
+ExecStart=/opt/meetsage/backend/venv/bin/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000
+Restart=on-failure
+RestartSec=5
+
+# Basic hardening — relax if it conflicts with your actual data/model paths.
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ReadWritePaths=/opt/meetsage/data
+
+[Install]
+WantedBy=multi-user.target
