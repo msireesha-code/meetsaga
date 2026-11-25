@@ -39,6 +39,40 @@ rather than via `./scripts/stop.sh`, make sure to kill the actual `vite`
 process too (`pgrep -af vite`), not just the `npm` wrapper, or it'll keep
 holding the port.
 
+### Frontend fails with `ERR_MODULE_NOT_FOUND ... node_modules/dist/node/cli.js`
+
+`start.sh` reports `Frontend failed to start`, and `data/logs/frontend.log`
+shows:
+
+```
+Error [ERR_MODULE_NOT_FOUND]: Cannot find module
+'.../frontend/node_modules/dist/node/cli.js' imported from
+.../frontend/node_modules/.bin/vite
+```
+
+Cause: the entries in `frontend/node_modules/.bin/` are plain file copies
+instead of symlinks (this happens when `node_modules` is copied, synced, or
+extracted with a tool that doesn't preserve symlinks). The copied `vite`
+script resolves its relative imports from `.bin/` rather than from
+`node_modules/vite/bin/`, so it can't find its own code. Plain `npm install`
+does not fix it because npm considers the packages already installed.
+
+Check: `ls -la frontend/node_modules/.bin/vite` should show a symlink
+(`-> ../vite/bin/vite.js`), not a regular file.
+
+Fix — recreate the bin links, then start again:
+
+```bash
+cd frontend
+rm -rf node_modules/.bin
+npm rebuild
+cd ..
+./scripts/start.sh
+```
+
+(Deleting `frontend/node_modules` entirely and running `npm install` also
+works, but takes longer.)
+
 ## FFmpeg missing / FFprobe missing
 
 ```bash
