@@ -18,3 +18,27 @@ frontend/dist/
 *.log
 .pytest_cache/
 .claude/
+
+# Meeting recordings — never commit audio/video files
+*.m4a
+*.mp3
+*.wav
+*.flac
+*.ogg
+*.aac
+*.mp4
+*.mkv
+*.webm
+*.mov
+*.avi
+*.M4A
+*.MP3
+*.WAV
+*.FLAC
+*.OGG
+*.AAC
+*.MP4
+*.MKV
+*.WEBM
+*.MOV
+*.AVI
